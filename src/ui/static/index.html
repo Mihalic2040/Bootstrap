@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BootStats</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="">Node id: 12D3KooWQd1K1k8XA9xVEzSAu7HUCodC7LJB6uW5Kw4VwkRdstPE</div>
+    <div id="graph-container" class="graph-container">
+        <div id="graph"></div>
+    </div>
+    
+
+    <script src="https://unpkg.com/force-graph@1.43.1/dist/force-graph.min.js"></script>
+    <script>
+        fetch('/api/peers')
+            .then(response => response.json())
+            .then(data => {
+                const gData = {
+                nodes: data.map((peer, i) => ({ id: i, peer: peer.peer })),
+                links: []
+                };
+
+                // Create links randomly between the nodes
+                gData.nodes.forEach((node, i) => {
+                const targetIndex = Math.floor(Math.random() * i);
+                gData.links.push({ source: node.id, target: targetIndex });
+                });
+
+                // Initialize the graph visualization
+                const Graph = ForceGraph()(document.getElementById('graph'))
+                .linkDirectionalParticles(2)
+                .linkCurvature(0)
+                .width(1920)
+                .height(1080)
+                .backgroundColor("white")
+                .nodeAutoColorBy("white")
+                .linkAutoColorBy("white")
+                .graphData(gData);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+    </script>
+</body>
+</html>
